@@ -96,38 +96,13 @@ class BCapUdp(BCapSocket):
                     message_length, BCapUdp._MAX_PACKET_SIZE
                 ),
             )
-            
+
         self._sock.sendto(serialized_packet, (self._host, self._port))
 
     def _recv(self, serial: int) -> Tuple[int, any]:
-        recv_buffer = b""
-
         while True:
-            buffer_size = len(recv_buffer)
-            if buffer_size < 1:
-                data, address = self._sock.recvfrom(65565)
-                recv_buffer = data
-
-            if recv_buffer[:1] != BCapConverter.BCAP_SOH:
-                # Can not receive b-CAP SOH.
-                recv_buffer = recv_buffer[1:]
-                continue
-
-            buffer_size = len(recv_buffer)
-            if buffer_size < 5:
-                data, address = self._sock.recvfrom(65565)
-                recv_buffer = b"".join([recv_buffer, data])
-
-            # Receive b-CAP packet size.
-            b_cap_size = (struct.unpack("<I", recv_buffer[1:5]))[0]
-
-            buffer_size = len(recv_buffer)
-            if buffer_size < b_cap_size:
-                data, address = self._sock.recvfrom(65565)
-                recv_buffer = b"".join([recv_buffer, data])
-
-            if recv_buffer[-1:] != BCapConverter.BCAP_EOT:
-                # Can not receive b-CAP EOT.
+            data, address = self._sock.recvfrom(65565)
+            if address[0] != self._host or address[1] != self._port:
                 continue
 
             (
@@ -135,9 +110,8 @@ class BCapUdp(BCapSocket):
                 version,
                 hr,
                 deserialized_args,
-            ) = self._bcap_converter.deserialize(recv_buffer)
+            ) = self._bcap_converter.deserialize(data)
 
-            recv_buffer = b""
             if (recv_serial == serial) and (hr != HResult.S_EXECUTING):
                 break
 

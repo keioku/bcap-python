@@ -9,7 +9,7 @@ with open("LICENSE", "r", encoding="utf-8") as f:
 
 setup(
     name="bcap",
-    version="0.1.0",
+    version="0.2.0",
     description="b-CAP client library",
     long_description=readme,
     long_description_content_type="text/markdown",
