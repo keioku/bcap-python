@@ -3,8 +3,7 @@
 ## Sample code
 
 ```python
-from bcap import BCapClient
-
+from bcap import BCapClient​
 # Select the protocol. The protocols that can be selected are tcp or udp.
 client = BCapClient("tcp")
 
@@ -15,7 +14,7 @@ try:
     client.service_start("WDT=400")
     # Execute AddController to connect RC8.
     controller_handle = client.controller_connect(
-        "Controller0", "CaoProv.DENSO.RC8", "", "@IfNotMember"
+        "Controller0", "CaoProv.DENSO.VRC", "localhost", "@IfNotMember"
     )
     # Execute AddRobot to control the robot.
     robot_handle = client.controller_get_robot(controller_handle, "Arm0", "@IfNotMember")
