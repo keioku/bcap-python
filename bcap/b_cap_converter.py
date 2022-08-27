@@ -242,8 +242,10 @@ class BCapConverter:
                 stream.write(struct.pack("<HI", VarType.VT_EMPTY, 1))
             else:
                 arg_type = type(arg[0])
-                is_vnt_array = all(arg_type is type(x) for x in arg) is False
-
+                has_array = arg_type in (list, tuple)
+                is_same_type = all(arg_type is type(x) for x in arg)
+                is_vnt_array = has_array or (is_same_type is False)
+                
                 if is_vnt_array:
                     # Variant array
                     stream.write(
